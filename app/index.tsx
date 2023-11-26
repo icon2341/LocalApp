@@ -1,49 +1,55 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import * as Location from 'expo-location';
 import {LocationAccuracy} from 'expo-location';
 import Mapbox from '@rnmapbox/maps';
 import MapboxGL from '@rnmapbox/maps';
 import React, {useEffect, useState} from "react";
-Mapbox.setAccessToken('pk.eyJ1IjoiaWNvbjIzNDEiLCJhIjoiY2xwM3o2ZmVjMTF2MzJxbWo2aHRtMzA4NiJ9.s2Gs6pMoeWcwVPDj0kOHgg').then(
+import { useHover, useFocus, useActive } from 'react-native-web-hooks';
+import { UserLocation } from '@rnmapbox/maps';
+Mapbox.setAccessToken('pk.eyJ1IjoiaWNvbjIzNDEiLCJhIjoiY2xwOWp3NXg0MDJ4YTJ2cDloOWF5OWp0bSJ9.HLO281Tv3fB3GMtZRYXk3A').then(
     () => {
-        console.log('Mapbox GL ready to go!');
-        MapboxGL.requestAndroidLocationPermissions().then(r => console.log(r));
+        // MapboxGL.setWellKnownTileServer('Mapbox');
     }
 )
 export default function Page() {
-
-    const [location, setLocation] = useState<any>(null);
-    const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-
-    MapboxGL.setConnected(true);
+    const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    const [isPressed, setIsPressed] = useState(false);
 
     useEffect(() => {
         (async () => {
-
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                setErrorMsg("Permission to access location was denied");
+                alert('Permission to access location was denied');
                 return;
             }
 
-            await Location.watchPositionAsync({accuracy: LocationAccuracy.Highest},
-                (r) => {console.log("LOCATION: "+ r.coords.longitude); setLocation(r.coords)});
-        })();
+            let location = await Location.watchPositionAsync({accuracy: LocationAccuracy.Highest},
+                (location) => {setLocation(location); console.log(location)});
+        })();br check_colony_A_loop
+        br is_location_taken
+
     }, []);
+
 
     return (
         <SafeAreaProvider>
             <View style={styles.page}>
                 <View style={styles.container}>
-                    <MapboxGL.MapView style={styles.map} >
-                        <MapboxGL.Camera
-                            zoomLevel={15}
-                            followUserLocation={true}
-                        />
-                        <MapboxGL.UserLocation minDisplacement={2} visible={true} animated={true}/>
+                    <Pressable onPress={() => {setIsPressed(!isPressed); console.log("SUGMA")}}>
+                        <Text>Press me</Text>
+
+                    </Pressable>
+                    <MapboxGL.MapView style={styles.map} styleURL={"mapbox://styles/mapbox/light-v11"}  >
+                        <MapboxGL.PointAnnotation
+                            id="currentLocation"
+                            coordinate={[location?.coords.longitude ?? 0, location?.coords.latitude ?? 0]}>
+                            <View style={isPressed ? styles.circle : styles.circleBlue}>
+                            </View>
+
+                        </MapboxGL.PointAnnotation>
                     </MapboxGL.MapView>
+
                 </View>
             </View>
         </SafeAreaProvider>
@@ -64,5 +70,17 @@ const styles = StyleSheet.create({
     },
     map: {
         flex: 1
+    },
+    circle: {
+        width: 30,
+        height: 30,
+        borderRadius: 30,
+        backgroundColor: "rgba(255,0,144,0.5)"
+    },
+    circleBlue: {
+        width: 30,
+        height: 30,
+        borderRadius: 30,
+        backgroundColor: "rgba(0,0,255,0.5)"
     }
 });

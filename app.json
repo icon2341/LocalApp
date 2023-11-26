@@ -38,15 +38,14 @@
       [
         "@rnmapbox/maps",
         {
-          "RNMapboxMapsImpl": "maplibre",
+          "RNMapboxMapsImpl": "mapbox",
           "RNMapboxMapsDownloadToken": ""
-
         }
       ],
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Show current location on map.",
+          "locationWhenInUsePermission": "Show current location on map."
         }
       ]
     ],
