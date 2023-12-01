@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+}
+.parent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #fff;
+}
+
+.circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #F68E5F;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0, .4);
+
+  &:after {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    left: -10px;
+    top: -10px;
+    border-radius: 50%;
+    border: 10px solid #55d6be;
+    animation: 1.5s ease-out infinite forwards blurBubble;
+  }
+}
+
+@keyframes blurBubble{
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    border: 35px solid #55d6be;
+    left: -35px;
+    top: -33px;
+  }
+}
